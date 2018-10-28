@@ -2,11 +2,15 @@ import bsh.Interpreter;
 import java.awt.Graphics;
 import java.awt.Color;
 import java.awt.Font;
-import javax.swing.JOptionPane;
-import javax.swing.UIManager;
+import java.awt.Image;
+import java.net.URL;
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
 
 public class GraphingCalculator extends javax.swing.JFrame {
 
+    Thread t;
+    
     double x = 0;
     double y = 0;
     
@@ -24,6 +28,8 @@ public class GraphingCalculator extends javax.swing.JFrame {
     private String graphing = "";
     
     private boolean operationSelected;
+    
+    private JLabel bglabel;
 
     /**
      * Creates new form Calculator
@@ -37,6 +43,16 @@ public class GraphingCalculator extends javax.swing.JFrame {
         jtxtDisplay.setEnabled(true);
 
         setResizable(false);
+        
+        try {
+            bglabel = new JLabel();
+            bglabel.setText("");
+            URL url = getClass().getResource("bg.gif");
+            bglabel.setIcon(new ImageIcon(url));
+            add(bglabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 400, this.getHeight()));
+            bglabel.setBounds(0, 0, 400, this.getHeight());
+        } catch(Exception e) {
+        }
 
         new Thread(new Runnable() {
             @Override
@@ -53,72 +69,84 @@ public class GraphingCalculator extends javax.swing.JFrame {
     }
     
     public void setGraph() {
-        try {
-            
-            Graphics g = graph.getGraphics();
-            graph.update(g);
-
-            for(int y=0; y<260; y+=10) {
-                g.setColor(Color.LIGHT_GRAY);
-                g.drawLine(0, y, 360, y);
-                if(y%20==0) {
-                    g.setColor(Color.BLACK);
-                    g.setFont(new Font("arial", Font.PLAIN, 8));
-                    g.drawString(((y-130)*yscale+this.y) + "", 180, y);
-                }
-            }
-            for(int x=0; x<360; x+=10) {
-                g.setColor(Color.LIGHT_GRAY);
-                g.drawLine(x, 0, x, 260);
-                if(x%20==0) {
-                    g.setColor(Color.BLACK);
-                    g.setFont(new Font("arial", Font.PLAIN, 8));
-                    g.drawString(((x-180)*xscale+this.x) + "", x, 130);
-                }
-            }
-
-            g.setColor(Color.BLACK);
-            g.drawLine(0, 130, 360, 130);
-            g.drawLine(180, 0, 180, 260);
-
-            g.setColor(Color.RED);
-
-            for(int x=-1800; x<1800; x++) {
-
-                double y;
-                Interpreter interpreter = new Interpreter();
-
-                interpreter.set("x", x);
-                //System.out.println("y=" + graphing);
-
-                interpreter.eval("y=" + graphing);
-                
+        if(t != null)
+            if(t.isAlive())
                 try {
-                    y = -1 * ((double) interpreter.get("y") / yscale) + 130;
+                    t.destroy();
                 } catch(Exception e) {
-                    y = -1 * ((int) interpreter.get("y") / yscale) + 130;
                 }
-                int currX = (int)(x/xscale) + 180 + (int)this.x;
-                int currY = (int) y - (int)this.y;
-                g.drawRect(currX, currY, 1, 1);
-
-                interpreter.set("x", x - 1);
-
-                interpreter.eval("y=" + graphing);
-                
+        t = new Thread(new Runnable() {
+            @Override
+            public void run() {
                 try {
-                    y = -1 * ((double) interpreter.get("y") / yscale) + 130;
-                } catch(Exception e) {
-                    y = -1 * ((int) interpreter.get("y") / yscale) + 130;
-                }
 
-                int prevX = (int)((x-1)/xscale) + 180 + (int)this.x;
-                int prevY = (int) y - (int)this.y;
-                g.drawLine(prevX, prevY, currX, currY);
+                    Graphics g = graph.getGraphics();
+                    graph.update(g);
+
+                    for(int yy=0; yy<260; yy+=10) {
+                        g.setColor(Color.LIGHT_GRAY);
+                        g.drawLine(0, yy, 360, yy);
+                        if(yy%20==0) {
+                            g.setColor(Color.BLACK);
+                            g.setFont(new Font("arial", Font.PLAIN, 8));
+                            g.drawString(((yy-130)*yscale+y) + "", 180, yy);
+                        }
+                    }
+                    for(int xx=0; xx<360; xx+=10) {
+                        g.setColor(Color.LIGHT_GRAY);
+                        g.drawLine(xx, 0, xx, 260);
+                        if(xx%20==0) {
+                            g.setColor(Color.BLACK);
+                            g.setFont(new Font("arial", Font.PLAIN, 8));
+                            g.drawString(((xx-180)*xscale+x) + "", xx, 130);
+                        }
+                    }
+
+                    g.setColor(Color.BLACK);
+                    g.drawLine(0, 130, 360, 130);
+                    g.drawLine(180, 0, 180, 260);
+
+                    g.setColor(Color.RED);
+
+                    for(int xx=-1800; xx<1800; xx++) {
+
+                        double yy;
+                        Interpreter interpreter = new Interpreter();
+
+                        interpreter.set("x", xx);
+                        //System.out.println("y=" + graphing);
+
+                        interpreter.eval("y=" + graphing);
+
+                        try {
+                            yy = -1 * ((double) interpreter.get("y") / yscale) + 130;
+                        } catch(Exception e) {
+                            yy = -1 * ((int) interpreter.get("y") / yscale) + 130;
+                        }
+                        int currX = (int)(xx/xscale) + 180 + (int)x;
+                        int currY = (int) yy - (int)y;
+                        g.drawRect(currX, currY, 1, 1);
+
+                        interpreter.set("x", xx - 1);
+
+                        interpreter.eval("y=" + graphing);
+
+                        try {
+                            yy = -1 * ((double) interpreter.get("y") / yscale) + 130;
+                        } catch(Exception e) {
+                            yy = -1 * ((int) interpreter.get("y") / yscale) + 130;
+                        }
+
+                        int prevX = (int)((xx-1)/xscale) + 180 + (int)x;
+                        int prevY = (int) yy - (int)y;
+                        g.drawLine(prevX, prevY, currX, currY);
+                    }
+                } catch(Exception e) {
+                    //e.printStackTrace();
+                }
             }
-        } catch(Exception e) {
-            //e.printStackTrace();
-        }
+        });
+        t.start();
     }
 
     /**
@@ -179,7 +207,7 @@ public class GraphingCalculator extends javax.swing.JFrame {
         jtxtDisplay.setBackground(new java.awt.Color(245, 245, 245));
         jtxtDisplay.setFont(new java.awt.Font("Verdana", 1, 20)); // NOI18N
         jtxtDisplay.setHorizontalAlignment(javax.swing.JTextField.TRAILING);
-        getContentPane().add(jtxtDisplay, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 10, 420, 50));
+        getContentPane().add(jtxtDisplay, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 10, 410, 50));
 
         jButton1.setBackground(java.awt.Color.darkGray);
         jButton1.setFont(new java.awt.Font("Monospaced", 1, 20)); // NOI18N
