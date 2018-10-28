@@ -1,21 +1,21 @@
 import bsh.Interpreter;
 import java.awt.Graphics;
 import java.awt.Color;
-import java.awt.Font;
-import java.awt.Image;
 import java.net.URL;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.UIManager;
 
 public class GraphingCalculator extends javax.swing.JFrame {
 
-    Thread t;
+    private Thread t;
     
-    double x = 0;
-    double y = 0;
+    private double x = 0;
+    private double y = 0;
     
-    double xscale = 1;
-    double yscale = 1;
+    private double xscale = 1;
+    private double yscale = 1;
             
     private String whichNumber = "firstNumber";
     private String buttonClick = "number";
@@ -49,8 +49,8 @@ public class GraphingCalculator extends javax.swing.JFrame {
             bglabel.setText("");
             URL url = getClass().getResource("bg.gif");
             bglabel.setIcon(new ImageIcon(url));
-            add(bglabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 400, this.getHeight()));
-            bglabel.setBounds(0, 0, 400, this.getHeight());
+            add(bglabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 420, this.getHeight()));
+            bglabel.setBounds(0, 0, 420, this.getHeight());
         } catch(Exception e) {
         }
 
@@ -72,7 +72,7 @@ public class GraphingCalculator extends javax.swing.JFrame {
         if(t != null)
             if(t.isAlive())
                 try {
-                    t.destroy();
+                    t.join();
                 } catch(Exception e) {
                 }
         t = new Thread(new Runnable() {
@@ -81,41 +81,35 @@ public class GraphingCalculator extends javax.swing.JFrame {
                 try {
 
                     Graphics g = graph.getGraphics();
-                    graph.update(g);
-
+                    
+                    g.setColor(Color.YELLOW);
+                    g.fillRect(0, 0, 360, 260);
+                    
+                    g.setColor(Color.LIGHT_GRAY);
+                    
                     for(int yy=0; yy<260; yy+=10) {
-                        g.setColor(Color.LIGHT_GRAY);
-                        g.drawLine(0, yy, 360, yy);
                         if(yy%20==0) {
-                            g.setColor(Color.BLACK);
-                            g.setFont(new Font("arial", Font.PLAIN, 8));
-                            g.drawString(((yy-130)*yscale+y) + "", 180, yy);
+                            g.drawLine(0, yy, 360, yy);
                         }
                     }
                     for(int xx=0; xx<360; xx+=10) {
-                        g.setColor(Color.LIGHT_GRAY);
-                        g.drawLine(xx, 0, xx, 260);
                         if(xx%20==0) {
-                            g.setColor(Color.BLACK);
-                            g.setFont(new Font("arial", Font.PLAIN, 8));
-                            g.drawString(((xx-180)*xscale+x) + "", xx, 130);
+                            g.drawLine(xx, 0, xx, 260);
                         }
                     }
 
                     g.setColor(Color.BLACK);
-                    g.drawLine(0, 130, 360, 130);
-                    g.drawLine(180, 0, 180, 260);
+                    g.drawLine(0, 130 + (int)y, 360, 130 + (int)y);
+                    g.drawLine(180 + (int)x, 0, 180 + (int)x, 260);
 
                     g.setColor(Color.RED);
 
-                    for(int xx=-1800; xx<1800; xx++) {
+                    for(int xx=-800; xx<800; xx++) {
 
                         double yy;
                         Interpreter interpreter = new Interpreter();
 
                         interpreter.set("x", xx);
-                        //System.out.println("y=" + graphing);
-
                         interpreter.eval("y=" + graphing);
 
                         try {
@@ -124,11 +118,9 @@ public class GraphingCalculator extends javax.swing.JFrame {
                             yy = -1 * ((int) interpreter.get("y") / yscale) + 130;
                         }
                         int currX = (int)(xx/xscale) + 180 + (int)x;
-                        int currY = (int) yy - (int)y;
-                        g.drawRect(currX, currY, 1, 1);
-
+                        int currY = (int) yy + (int)y;
+                        
                         interpreter.set("x", xx - 1);
-
                         interpreter.eval("y=" + graphing);
 
                         try {
@@ -138,11 +130,10 @@ public class GraphingCalculator extends javax.swing.JFrame {
                         }
 
                         int prevX = (int)((xx-1)/xscale) + 180 + (int)x;
-                        int prevY = (int) yy - (int)y;
+                        int prevY = (int) yy + (int)y;
                         g.drawLine(prevX, prevY, currX, currY);
                     }
                 } catch(Exception e) {
-                    //e.printStackTrace();
                 }
             }
         });
@@ -440,7 +431,7 @@ public class GraphingCalculator extends javax.swing.JFrame {
         getContentPane().add(jButton21, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 70, 60, 50));
 
         jButton22.setBackground(java.awt.Color.darkGray);
-        jButton22.setFont(new java.awt.Font("Monospaced", 1, 10)); // NOI18N
+        jButton22.setFont(new java.awt.Font("Monospaced", 1, 14)); // NOI18N
         jButton22.setForeground(new java.awt.Color(255, 255, 255));
         jButton22.setText("asin");
         jButton22.addActionListener(new java.awt.event.ActionListener() {
@@ -473,7 +464,7 @@ public class GraphingCalculator extends javax.swing.JFrame {
         getContentPane().add(jButton24, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 130, 60, 50));
 
         jButton25.setBackground(java.awt.Color.darkGray);
-        jButton25.setFont(new java.awt.Font("Monospaced", 1, 10)); // NOI18N
+        jButton25.setFont(new java.awt.Font("Monospaced", 1, 14)); // NOI18N
         jButton25.setForeground(new java.awt.Color(255, 255, 255));
         jButton25.setText("atan");
         jButton25.addActionListener(new java.awt.event.ActionListener() {
@@ -495,7 +486,7 @@ public class GraphingCalculator extends javax.swing.JFrame {
         getContentPane().add(jButton26, new org.netbeans.lib.awtextra.AbsoluteConstraints(360, 250, 60, 50));
 
         jButton27.setBackground(java.awt.Color.darkGray);
-        jButton27.setFont(new java.awt.Font("Monospaced", 1, 10)); // NOI18N
+        jButton27.setFont(new java.awt.Font("Monospaced", 1, 14)); // NOI18N
         jButton27.setForeground(new java.awt.Color(255, 255, 255));
         jButton27.setText("√x");
         jButton27.addActionListener(new java.awt.event.ActionListener() {
@@ -506,7 +497,7 @@ public class GraphingCalculator extends javax.swing.JFrame {
         getContentPane().add(jButton27, new org.netbeans.lib.awtextra.AbsoluteConstraints(360, 190, 60, 50));
 
         jButton28.setBackground(java.awt.Color.darkGray);
-        jButton28.setFont(new java.awt.Font("Monospaced", 1, 10)); // NOI18N
+        jButton28.setFont(new java.awt.Font("Monospaced", 1, 14)); // NOI18N
         jButton28.setForeground(new java.awt.Color(255, 255, 255));
         jButton28.setText("acos");
         jButton28.addActionListener(new java.awt.event.ActionListener() {
@@ -528,9 +519,9 @@ public class GraphingCalculator extends javax.swing.JFrame {
         getContentPane().add(jButton29, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 310, 60, 50));
 
         jButton30.setBackground(java.awt.Color.darkGray);
-        jButton30.setFont(new java.awt.Font("Monospaced", 1, 14)); // NOI18N
+        jButton30.setFont(new java.awt.Font("Monospaced", 1, 12)); // NOI18N
         jButton30.setForeground(new java.awt.Color(255, 255, 255));
-        jButton30.setText("log");
+        jButton30.setText("log x");
         jButton30.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton30ActionPerformed(evt);
@@ -539,7 +530,7 @@ public class GraphingCalculator extends javax.swing.JFrame {
         getContentPane().add(jButton30, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 310, 60, 50));
 
         graph.setBackground(new java.awt.Color(225, 225, 225));
-        graph.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.LOWERED));
+        graph.setBorder(javax.swing.BorderFactory.createTitledBorder("Graph"));
         graph.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
         getContentPane().add(graph, new org.netbeans.lib.awtextra.AbsoluteConstraints(450, 10, 360, 260));
 
@@ -706,41 +697,43 @@ public class GraphingCalculator extends javax.swing.JFrame {
                         } while(cPos < sLen && !fallout);
                     }
                 }
-                if(g.substring(charPos,charPos+5).equals("sin x")) {
-                    try {
-                        g = g.substring(0,charPos) + "Math.sin(x)" + g.substring(charPos+11,g.length());
-                        xscale /= 10;
-                        yscale /= 10;
-                    } catch(Exception e) {
-                        g = g.substring(0,charPos) + "Math.sin(x)";
-                        xscale /= 10;
-                        yscale /= 10;
+                try {
+                    if(g.substring(charPos,charPos+5).equals("sin x")) {
+                        try {
+                            g = g.substring(0,charPos) + "Math.sin(x)" + g.substring(charPos+11,g.length());
+                            xscale /= 12;
+                            yscale /= 12;
+                        } catch(Exception e) {
+                            g = g.substring(0,charPos) + "Math.sin(x)";
+                            xscale /= 12;
+                            yscale /= 12;
+                        }
                     }
-                }
-                if(g.substring(charPos,charPos+5).equals("cos x")) {
-                    try {
-                        g = g.substring(0,charPos) + "Math.cos(x)" + g.substring(charPos+11,g.length());
-                        xscale /= 10;
-                        yscale /= 10;
-                    } catch(Exception e) {
-                        g = g.substring(0,charPos) + "Math.cos(x)";
-                        xscale /= 10;
-                        yscale /= 10;
+                    if(g.substring(charPos,charPos+5).equals("cos x")) {
+                        try {
+                            g = g.substring(0,charPos) + "Math.cos(x)" + g.substring(charPos+11,g.length());
+                            xscale /= 12;
+                            yscale /= 12;
+                        } catch(Exception e) {
+                            g = g.substring(0,charPos) + "Math.cos(x)";
+                            xscale /= 12;
+                            yscale /= 12;
+                        }
                     }
-                }
-                if(g.substring(charPos,charPos+5).equals("tan x")) {
-                    try {
-                        g = g.substring(0,charPos) + "Math.tan(x)" + g.substring(charPos+11,g.length());
-                        xscale /= 10;
-                        yscale /= 10;
-                    } catch(Exception e) {
-                        g = g.substring(0,charPos) + "Math.tan(x)";
-                        xscale /= 10;
-                        yscale /= 10;
+                    if(g.substring(charPos,charPos+5).equals("tan x")) {
+                        try {
+                            g = g.substring(0,charPos) + "Math.tan(x)" + g.substring(charPos+11,g.length());
+                            xscale /= 12;
+                            yscale /= 12;
+                        } catch(Exception e) {
+                            g = g.substring(0,charPos) + "Math.tan(x)";
+                            xscale /= 12;
+                            yscale /= 12;
+                        }
                     }
+                } catch(Exception e) {
                 }
             } catch(Exception e) {
-                //e.printStackTrace();
             }
             charPos++;
         } while(charPos < strLength);
@@ -1169,19 +1162,11 @@ public class GraphingCalculator extends javax.swing.JFrame {
                         do {
                             try {
                                 if(g.substring(cPos+2,cPos+3).equals(" ")) {
-                                    if(Integer.parseInt(g.substring(charPos+2,cPos+2)) > 1) {
-                                        int v = Integer.parseInt(g.substring(charPos+2,cPos+2));
-//                                        yscale = (int) Math.pow(1.7*v,1.7*v);
-                                    }
                                     g = g.substring(0,charPos) + "Math.pow(x," + g.substring(charPos+2,cPos+2) + ")" + g.substring(cPos+2,g.length());
                                     fallout = true;
                                 }
                             } catch(Exception e1) {
                                 try {
-                                    if(Integer.parseInt(g.substring(charPos+2,cPos+2)) > 1) {
-                                        int v = Integer.parseInt(g.substring(charPos+2,cPos+2));
-//                                        yscale = (int) Math.pow(1.7*v,1.7*v);
-                                    }
                                     g = g.substring(0,charPos) + "Math.pow(x," + g.substring(charPos+2,cPos+2) + ")";
                                     fallout = true;
                                 } catch(Exception e2) {
@@ -1192,7 +1177,6 @@ public class GraphingCalculator extends javax.swing.JFrame {
                     }
                 }
             } catch(Exception e) {
-                e.printStackTrace();
             }
             charPos++;
         } while(charPos < strLength);
@@ -1223,19 +1207,11 @@ public class GraphingCalculator extends javax.swing.JFrame {
                         do {
                             try {
                                 if(g.substring(cPos+2,cPos+3).equals(" ")) {
-                                    if(Integer.parseInt(g.substring(charPos+2,cPos+2)) > 1) {
-                                        int v = Integer.parseInt(g.substring(charPos+2,cPos+2));
-//                                        yscale = (int) Math.pow(1.7*v,1.7*v);
-                                    }
                                     g = g.substring(0,charPos) + "Math.pow(x," + g.substring(charPos+2,cPos+2) + ")" + g.substring(cPos+2,g.length());
                                     fallout = true;
                                 }
                             } catch(Exception e1) {
                                 try {
-                                    if(Integer.parseInt(g.substring(charPos+2,cPos+2)) > 1) {
-                                        int v = Integer.parseInt(g.substring(charPos+2,cPos+2));
-//                                        yscale = (int) Math.pow(1.7*v,1.7*v);
-                                    }
                                     g = g.substring(0,charPos) + "Math.pow(x," + g.substring(charPos+2,cPos+2) + ")";
                                     fallout = true;
                                 } catch(Exception e2) {
@@ -1246,7 +1222,6 @@ public class GraphingCalculator extends javax.swing.JFrame {
                     }
                 }
             } catch(Exception e) {
-                e.printStackTrace();
             }
             charPos++;
         } while(charPos < strLength);
@@ -1258,14 +1233,14 @@ public class GraphingCalculator extends javax.swing.JFrame {
 
     private void jButton37ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton37ActionPerformed
 
-        this.y -= yscale * 5;
+        this.y += 20;
         
         dograph();
     }//GEN-LAST:event_jButton37ActionPerformed
 
     private void jButton34ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton34ActionPerformed
 
-        this.y += yscale * 5;
+        this.y -= 20;
         
         dograph();
 
@@ -1273,7 +1248,7 @@ public class GraphingCalculator extends javax.swing.JFrame {
 
     private void jButton35ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton35ActionPerformed
 
-        this.x += xscale * 15;
+        this.x += xscale * 25;
         
         dograph();
 
@@ -1281,7 +1256,7 @@ public class GraphingCalculator extends javax.swing.JFrame {
 
     private void jButton36ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton36ActionPerformed
 
-        this.x -= xscale * 15;
+        this.x -= xscale * 25;
         
         dograph();
     }//GEN-LAST:event_jButton36ActionPerformed
@@ -1304,19 +1279,11 @@ public class GraphingCalculator extends javax.swing.JFrame {
                         do {
                             try {
                                 if(g.substring(cPos+2,cPos+3).equals(" ")) {
-                                    if(Integer.parseInt(g.substring(charPos+2,cPos+2)) > 1) {
-                                        int v = Integer.parseInt(g.substring(charPos+2,cPos+2));
-//                                        yscale = (int) Math.pow(1.7*v,1.7*v);
-                                    }
                                     g = g.substring(0,charPos) + "Math.pow(x," + g.substring(charPos+2,cPos+2) + ")" + g.substring(cPos+2,g.length());
                                     fallout = true;
                                 }
                             } catch(Exception e1) {
                                 try {
-                                    if(Integer.parseInt(g.substring(charPos+2,cPos+2)) > 1) {
-                                        int v = Integer.parseInt(g.substring(charPos+2,cPos+2));
-//                                        yscale = (int) Math.pow(1.7*v,1.7*v);
-                                    }
                                     g = g.substring(0,charPos) + "Math.pow(x," + g.substring(charPos+2,cPos+2) + ")";
                                     fallout = true;
                                 } catch(Exception e2) {
@@ -1326,38 +1293,41 @@ public class GraphingCalculator extends javax.swing.JFrame {
                         } while(cPos < sLen && !fallout);
                     }
                 }
-                if(g.substring(charPos,charPos+5).equals("sin x")) {
-                    try {
-                        g = g.substring(0,charPos) + "Math.sin(x)" + g.substring(charPos+11,g.length());
-                        xscale /= 10;
-                        yscale /= 10;
-                    } catch(Exception e) {
-                        g = g.substring(0,charPos) + "Math.sin(x)";
-                        xscale /= 10;
-                        yscale /= 10;
+                try {
+                    if(g.substring(charPos,charPos+5).equals("sin x")) {
+                        try {
+                            g = g.substring(0,charPos) + "Math.sin(x)" + g.substring(charPos+11,g.length());
+                            xscale /= 12;
+                            yscale /= 12;
+                        } catch(Exception e) {
+                            g = g.substring(0,charPos) + "Math.sin(x)";
+                            xscale /= 12;
+                            yscale /= 12;
+                        }
                     }
-                }
-                if(g.substring(charPos,charPos+5).equals("cos x")) {
-                    try {
-                        g = g.substring(0,charPos) + "Math.cos(x)" + g.substring(charPos+11,g.length());
-                        xscale /= 10;
-                        yscale /= 10;
-                    } catch(Exception e) {
-                        g = g.substring(0,charPos) + "Math.cos(x)";
-                        xscale /= 10;
-                        yscale /= 10;
+                    if(g.substring(charPos,charPos+5).equals("cos x")) {
+                        try {
+                            g = g.substring(0,charPos) + "Math.cos(x)" + g.substring(charPos+11,g.length());
+                            xscale /= 12;
+                            yscale /= 12;
+                        } catch(Exception e) {
+                            g = g.substring(0,charPos) + "Math.cos(x)";
+                            xscale /= 12;
+                            yscale /= 12;
+                        }
                     }
-                }
-                if(g.substring(charPos,charPos+5).equals("tan x")) {
-                    try {
-                        g = g.substring(0,charPos) + "Math.tan(x)" + g.substring(charPos+11,g.length());
-                        xscale /= 10;
-                        yscale /= 10;
-                    } catch(Exception e) {
-                        g = g.substring(0,charPos) + "Math.tan(x)";
-                        xscale /= 10;
-                        yscale /= 10;
+                    if(g.substring(charPos,charPos+5).equals("tan x")) {
+                        try {
+                            g = g.substring(0,charPos) + "Math.tan(x)" + g.substring(charPos+11,g.length());
+                            xscale /= 12;
+                            yscale /= 12;
+                        } catch(Exception e) {
+                            g = g.substring(0,charPos) + "Math.tan(x)";
+                            xscale /= 12;
+                            yscale /= 12;
+                        }
                     }
+                } catch(Exception e) {
                 }
             } catch(Exception e) {
                 e.printStackTrace();
@@ -1375,12 +1345,12 @@ public class GraphingCalculator extends javax.swing.JFrame {
      */
     public static void main(String args[]) {
         
-//        try {
-//            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-//            UIManager.setLookAndFeel("com.jtattoo.plaf.aluminium.AluminiumLookAndFeel");
-//        } catch(Exception e) {
-//            JOptionPane.showMessageDialog(null, e.getMessage());
-//        }
+        try {
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+            UIManager.setLookAndFeel("com.jtattoo.plaf.aluminium.AluminiumLookAndFeel");
+        } catch(Exception e) {
+            JOptionPane.showMessageDialog(null, e.getMessage());
+        }
         
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
