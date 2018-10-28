@@ -9,7 +9,7 @@ import javax.swing.UIManager;
 
 public class GraphingCalculator extends javax.swing.JFrame {
 
-    private Thread t;
+    private Thread t, t2;
     
     private double x = 0;
     private double y = 0;
@@ -49,8 +49,8 @@ public class GraphingCalculator extends javax.swing.JFrame {
             bglabel.setText("");
             URL url = getClass().getResource("bg.gif");
             bglabel.setIcon(new ImageIcon(url));
-            add(bglabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 420, this.getHeight()));
-            bglabel.setBounds(0, 0, 420, this.getHeight());
+            add(bglabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 440, this.getHeight()));
+            bglabel.setBounds(0, 0, 440, this.getHeight());
         } catch(Exception e) {
         }
 
@@ -82,18 +82,18 @@ public class GraphingCalculator extends javax.swing.JFrame {
 
                     Graphics g = graph.getGraphics();
                     
-                    g.setColor(Color.YELLOW);
+                    g.setColor(new Color(200, 240, 200));
                     g.fillRect(0, 0, 360, 260);
                     
                     g.setColor(Color.LIGHT_GRAY);
                     
                     for(int yy=0; yy<260; yy+=10) {
-                        if(yy%20==0) {
+                        if(yy%30==0) {
                             g.drawLine(0, yy, 360, yy);
                         }
                     }
                     for(int xx=0; xx<360; xx+=10) {
-                        if(xx%20==0) {
+                        if(xx%30==0) {
                             g.drawLine(xx, 0, xx, 260);
                         }
                     }
@@ -409,7 +409,7 @@ public class GraphingCalculator extends javax.swing.JFrame {
         });
         getContentPane().add(jButton19, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 310, 60, 50));
 
-        jButton20.setBackground(new java.awt.Color(204, 255, 204));
+        jButton20.setBackground(new java.awt.Color(0, 255, 153));
         jButton20.setFont(new java.awt.Font("Monospaced", 1, 15)); // NOI18N
         jButton20.setText("graph");
         jButton20.addActionListener(new java.awt.event.ActionListener() {
@@ -530,7 +530,6 @@ public class GraphingCalculator extends javax.swing.JFrame {
         getContentPane().add(jButton30, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 310, 60, 50));
 
         graph.setBackground(new java.awt.Color(225, 225, 225));
-        graph.setBorder(javax.swing.BorderFactory.createTitledBorder("Graph"));
         graph.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
         getContentPane().add(graph, new org.netbeans.lib.awtextra.AbsoluteConstraints(450, 10, 360, 260));
 
@@ -661,6 +660,11 @@ public class GraphingCalculator extends javax.swing.JFrame {
         
         String g = jtxtDisplay.getText();
         
+        if(g.contains("sin x") || g.contains("cos x") || g.contains("tan x")) {
+            xscale /= 12;
+            yscale /= 12;
+        }
+        
         int charPos = 0;
         int strLength = g.length();
         
@@ -701,34 +705,22 @@ public class GraphingCalculator extends javax.swing.JFrame {
                     if(g.substring(charPos,charPos+5).equals("sin x")) {
                         try {
                             g = g.substring(0,charPos) + "Math.sin(x)" + g.substring(charPos+11,g.length());
-                            xscale /= 12;
-                            yscale /= 12;
                         } catch(Exception e) {
                             g = g.substring(0,charPos) + "Math.sin(x)";
-                            xscale /= 12;
-                            yscale /= 12;
                         }
                     }
                     if(g.substring(charPos,charPos+5).equals("cos x")) {
                         try {
                             g = g.substring(0,charPos) + "Math.cos(x)" + g.substring(charPos+11,g.length());
-                            xscale /= 12;
-                            yscale /= 12;
                         } catch(Exception e) {
                             g = g.substring(0,charPos) + "Math.cos(x)";
-                            xscale /= 12;
-                            yscale /= 12;
                         }
                     }
                     if(g.substring(charPos,charPos+5).equals("tan x")) {
                         try {
                             g = g.substring(0,charPos) + "Math.tan(x)" + g.substring(charPos+11,g.length());
-                            xscale /= 12;
-                            yscale /= 12;
                         } catch(Exception e) {
                             g = g.substring(0,charPos) + "Math.tan(x)";
-                            xscale /= 12;
-                            yscale /= 12;
                         }
                     }
                 } catch(Exception e) {
@@ -1176,6 +1168,30 @@ public class GraphingCalculator extends javax.swing.JFrame {
                         } while(cPos < sLen && !fallout);
                     }
                 }
+                try {
+                    if(g.substring(charPos,charPos+5).equals("sin x")) {
+                        try {
+                            g = g.substring(0,charPos) + "Math.sin(x)" + g.substring(charPos+11,g.length());
+                        } catch(Exception e) {
+                            g = g.substring(0,charPos) + "Math.sin(x)";
+                        }
+                    }
+                    if(g.substring(charPos,charPos+5).equals("cos x")) {
+                        try {
+                            g = g.substring(0,charPos) + "Math.cos(x)" + g.substring(charPos+11,g.length());
+                        } catch(Exception e) {
+                            g = g.substring(0,charPos) + "Math.cos(x)";
+                        }
+                    }
+                    if(g.substring(charPos,charPos+5).equals("tan x")) {
+                        try {
+                            g = g.substring(0,charPos) + "Math.tan(x)" + g.substring(charPos+11,g.length());
+                        } catch(Exception e) {
+                            g = g.substring(0,charPos) + "Math.tan(x)";
+                        }
+                    }
+                } catch(Exception e) {
+                }
             } catch(Exception e) {
             }
             charPos++;
@@ -1221,6 +1237,30 @@ public class GraphingCalculator extends javax.swing.JFrame {
                         } while(cPos < sLen && !fallout);
                     }
                 }
+                try {
+                    if(g.substring(charPos,charPos+5).equals("sin x")) {
+                        try {
+                            g = g.substring(0,charPos) + "Math.sin(x)" + g.substring(charPos+11,g.length());
+                        } catch(Exception e) {
+                            g = g.substring(0,charPos) + "Math.sin(x)";
+                        }
+                    }
+                    if(g.substring(charPos,charPos+5).equals("cos x")) {
+                        try {
+                            g = g.substring(0,charPos) + "Math.cos(x)" + g.substring(charPos+11,g.length());
+                        } catch(Exception e) {
+                            g = g.substring(0,charPos) + "Math.cos(x)";
+                        }
+                    }
+                    if(g.substring(charPos,charPos+5).equals("tan x")) {
+                        try {
+                            g = g.substring(0,charPos) + "Math.tan(x)" + g.substring(charPos+11,g.length());
+                        } catch(Exception e) {
+                            g = g.substring(0,charPos) + "Math.tan(x)";
+                        }
+                    }
+                } catch(Exception e) {
+                }
             } catch(Exception e) {
             }
             charPos++;
@@ -1233,32 +1273,74 @@ public class GraphingCalculator extends javax.swing.JFrame {
 
     private void jButton37ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton37ActionPerformed
 
-        this.y += 20;
-        
-        dograph();
+        if(t2 != null)
+            if(t2.isAlive())
+                try {
+                    t2.join();
+                } catch(Exception e) {
+                }
+        t2 = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                y += 35;
+                dograph();
+            }
+        });
+        t2.start();
     }//GEN-LAST:event_jButton37ActionPerformed
 
     private void jButton34ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton34ActionPerformed
 
-        this.y -= 20;
-        
-        dograph();
-
+        if(t2 != null)
+            if(t2.isAlive())
+                try {
+                    t2.join();
+                } catch(Exception e) {
+                }
+        t2 = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                y -= 35;
+                dograph();
+            }
+        });
+        t2.start();
     }//GEN-LAST:event_jButton34ActionPerformed
 
     private void jButton35ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton35ActionPerformed
 
-        this.x += xscale * 25;
-        
-        dograph();
-
+        if(t2 != null)
+            if(t2.isAlive())
+                try {
+                    t2.join();
+                } catch(Exception e) {
+                }
+        t2 = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                x += 35;
+                dograph();
+            }
+        });
+        t2.start();
     }//GEN-LAST:event_jButton35ActionPerformed
 
     private void jButton36ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton36ActionPerformed
 
-        this.x -= xscale * 25;
-        
-        dograph();
+        if(t2 != null)
+            if(t2.isAlive())
+                try {
+                    t2.join();
+                } catch(Exception e) {
+                }
+        t2 = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                x -= 35;
+                dograph();
+            }
+        });
+        t2.start();
     }//GEN-LAST:event_jButton36ActionPerformed
 
     private void dograph() {
@@ -1297,34 +1379,22 @@ public class GraphingCalculator extends javax.swing.JFrame {
                     if(g.substring(charPos,charPos+5).equals("sin x")) {
                         try {
                             g = g.substring(0,charPos) + "Math.sin(x)" + g.substring(charPos+11,g.length());
-                            xscale /= 12;
-                            yscale /= 12;
                         } catch(Exception e) {
                             g = g.substring(0,charPos) + "Math.sin(x)";
-                            xscale /= 12;
-                            yscale /= 12;
                         }
                     }
                     if(g.substring(charPos,charPos+5).equals("cos x")) {
                         try {
                             g = g.substring(0,charPos) + "Math.cos(x)" + g.substring(charPos+11,g.length());
-                            xscale /= 12;
-                            yscale /= 12;
                         } catch(Exception e) {
                             g = g.substring(0,charPos) + "Math.cos(x)";
-                            xscale /= 12;
-                            yscale /= 12;
                         }
                     }
                     if(g.substring(charPos,charPos+5).equals("tan x")) {
                         try {
                             g = g.substring(0,charPos) + "Math.tan(x)" + g.substring(charPos+11,g.length());
-                            xscale /= 12;
-                            yscale /= 12;
                         } catch(Exception e) {
                             g = g.substring(0,charPos) + "Math.tan(x)";
-                            xscale /= 12;
-                            yscale /= 12;
                         }
                     }
                 } catch(Exception e) {
