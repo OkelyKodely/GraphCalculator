@@ -1,6 +1,7 @@
 import bsh.Interpreter;
 import java.awt.Graphics;
 import java.awt.Color;
+import java.awt.Font;
 import java.net.URL;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
@@ -102,8 +103,6 @@ public class GraphingCalculator extends javax.swing.JFrame {
                     g.drawLine(0, 130 + (int)y, 360, 130 + (int)y);
                     g.drawLine(180 + (int)x, 0, 180 + (int)x, 260);
 
-                    g.setColor(Color.RED);
-
                     for(int xx=-800; xx<800; xx++) {
 
                         double yy;
@@ -120,6 +119,13 @@ public class GraphingCalculator extends javax.swing.JFrame {
                         int currX = (int)(xx/xscale) + 180 + (int)x;
                         int currY = (int) yy + (int)y;
                         
+                        if(xx%30==0) {
+                            g.setFont(new Font("arial", Font.BOLD, 9));
+                            g.setColor(Color.DARK_GRAY);
+                            g.drawString("" +  1*xx*(xscale), xx+180+(int)x, 130+(int)y);
+                            g.drawString("" + -1*xx*(yscale/xscale), 180+(int)x, xx+130+(int)y);
+                        }
+                        
                         interpreter.set("x", xx - 1);
                         interpreter.eval("y=" + graphing);
 
@@ -131,6 +137,9 @@ public class GraphingCalculator extends javax.swing.JFrame {
 
                         int prevX = (int)((xx-1)/xscale) + 180 + (int)x;
                         int prevY = (int) yy + (int)y;
+
+                        g.setColor(Color.RED);
+
                         g.drawLine(prevX, prevY, currX, currY);
                     }
                 } catch(Exception e) {
